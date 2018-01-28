@@ -6,18 +6,26 @@ public class FunctionalInterfacesDemo {
 	public static void main(String[] args) {
 		Function<Integer, Cube> integerToCube = new Function<Integer, Cube>() {
 			@Override
-			public Cube apply(Integer t) {
-				return new Cube(t);
+			public Cube apply(Integer size) {
+				return new Cube(size);
 			}
 		};
 		Function<Cube, ColoredCube> cubeToColoredCube = new Function<Cube, ColoredCube>() {
 			
 			@Override
-			public ColoredCube apply(Cube t) {
-				return null;
+			public ColoredCube apply(Cube cube) {
+				return new ColoredCube(cube.size, "Red");
 			}
 		};
-		Function<ColoredCube, Long> coloredCubeVolume;
+		Function<ColoredCube, Long> coloredCubeVolume = new Function<ColoredCube, Long>() {
+			@Override
+			public Long apply(ColoredCube coloredCube) {
+				return coloredCube.volume();
+			}
+		};
+		
+		Long volume = cubeToColoredCube.compose(integerToCube).andThen(coloredCubeVolume).apply(5);
+		System.out.println(volume);
 	}
 	
 	static class Cube {
@@ -44,6 +52,11 @@ public class FunctionalInterfacesDemo {
 		@Override
 		public String toString() {
 			return super.toString() + " and color: " + color;
+		}
+		
+		public long volume() {
+			long size = this.size;
+			return size * size * size;
 		}
 	}
 }
